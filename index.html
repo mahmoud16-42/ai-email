@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Cold Email Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f9fc; padding: 20px; max-width: 600px; margin: auto; }
+    h1 { text-align: center; color: #333; }
+    label { font-weight: bold; }
+    input, textarea, button {
+      width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px;
+    }
+    button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    #output { white-space: pre-wrap; background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #ddd; }
+  </style>
+</head>
+<body>
+  <h1>AI Cold Email Generator</h1>
+  <label for="service">What are you offering?</label>
+  <input type="text" id="service" placeholder="e.g., Social Media Marketing for dentists" />
+
+  <label for="target">Who is your target?</label>
+  <input type="text" id="target" placeholder="e.g., Local dental clinics in Texas" />
+
+  <button onclick="generateEmail()">Generate Email</button>
+
+  <h3>Generated Email:</h3>
+  <div id="output">Your email will appear here...</div>
+
+  <script>
+    async function generateEmail() {
+      const service = document.getElementById('service').value;
+      const target = document.getElementById('target').value;
+      const outputDiv = document.getElementById('output');
+
+      outputDiv.innerText = 'Generating...';
+
+      const prompt = `Write a cold email to pitch the following service: ${service}. Target audience: ${target}. Make it short, professional, and persuasive.`;
+
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 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"
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.7
+        })
+      });
+
+      const data = await response.json();
+      const email = data.choices?.[0]?.message?.content || "Error generating email.";
+
+      outputDiv.innerText = email;
+    }
+  </script>
+</body>
+</html>
